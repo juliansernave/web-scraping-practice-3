@@ -1,0 +1,49 @@
+[project]
+name = "scrapekit"
+version = "0.1.0"
+description = "Target-agnostic, production-grade web scraping framework: pluggable fetchers, CSS/LLM extraction, validated + drift-monitored output"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+    "tenacity>=9.0",
+    "aiolimiter>=1.1",
+    "protego>=0.3",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "structlog>=24.1",
+    "anthropic>=0.40",
+    "typer>=0.12",
+    "playwright>=1.45",
+]
+# crawl4ai is added on Day 6 (`uv add crawl4ai`) — it's heavy, keep base deps lean.
+
+[dependency-groups]
+dev = [
+    "pytest>=8.2",
+    "pytest-asyncio>=0.23",
+    "respx>=0.21",
+    "syrupy>=4.6",
+    "ruff>=0.5",
+]
+
+[project.scripts]
+scrapekit = "scrapekit.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/scrapekit"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+    "live: tests that hit real networks/APIs (excluded from CI: -m 'not live')",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests", "targets"]
