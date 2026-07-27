@@ -23,6 +23,8 @@ class Book(BaseModel):
 
     title: str = Field(min_length=1)
     price: Decimal = Field(ge=0, description="Price with the currency symbol already stripped.")
-    rating: int = Field(ge=1, le=5, description="Star rating 1–5 (books.toscrape encodes it in a class).")
+    rating: int = Field(
+        ge=1, le=5, description="Star rating 1–5 (books.toscrape encodes it in a class)."
+    )
     availability: str = Field(default="", description="Raw availability text, e.g. 'In stock'.")
     url: HttpUrl = Field(description="Absolute URL to the book's detail page.")

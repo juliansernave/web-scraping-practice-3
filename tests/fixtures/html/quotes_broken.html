@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!-- Hand-crafted fixture: a deliberately malformed page to exercise per-item error
+     collection. Two of the four div.quote blocks are broken on purpose:
+       index 0 — valid
+       index 1 — text is only the wrapping marks (“”) => empty after unwrap => ValidationError
+       index 2 — <small class="author"> node missing entirely => parse AttributeError
+       index 3 — valid
+     Expected extraction: valid=2, invalid=2. -->
+<html lang="en">
+<body>
+  <div class="container">
+    <div class="quote">
+      <span class="text">“The only way to do great work is to love what you do.”</span>
+      <small class="author">Steve Jobs</small>
+      <div class="tags"><a class="tag">work</a><a class="tag">passion</a></div>
+    </div>
+
+    <div class="quote">
+      <span class="text">“”</span>
+      <small class="author">Empty Quote Person</small>
+      <div class="tags"></div>
+    </div>
+
+    <div class="quote">
+      <span class="text">“A quote with no author node at all.”</span>
+      <div class="tags"><a class="tag">orphan</a></div>
+    </div>
+
+    <div class="quote">
+      <span class="text">“Simplicity is the ultimate sophistication.”</span>
+      <small class="author">Leonardo da Vinci</small>
+      <div class="tags"><a class="tag">simplicity</a></div>
+    </div>
+  </div>
+</body>
+</html>

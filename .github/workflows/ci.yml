@@ -1,0 +1,34 @@
+name: CI
+
+# The differentiator, running on every push: the suite proves the scraper's unhappy paths
+# with zero network access. A parser/retry regression fails here, in CI — not silently in prod.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Sync dependencies (locked)
+        run: uv sync --frozen
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Format check
+        run: uv run ruff format --check .
+
+      - name: Tests (no network — live tests excluded)
+        run: uv run pytest -m "not live" -q

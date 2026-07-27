@@ -123,8 +123,10 @@ class JsonlStore:
             for rec in self._records:
                 # Serialize list/dict cells to JSON so the CSV stays single-valued per column.
                 writer.writerow(
-                    {k: json.dumps(v, ensure_ascii=False) if isinstance(v, (list, dict)) else v
-                     for k, v in rec.items()}
+                    {
+                        k: json.dumps(v, ensure_ascii=False) if isinstance(v, (list, dict)) else v
+                        for k, v in rec.items()
+                    }
                 )
         log.info("storage.export_csv", path=str(out), rows=len(self._records))
         return out

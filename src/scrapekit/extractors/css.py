@@ -66,7 +66,9 @@ class CssExtractor:
                     f"{'.'.join(str(p) for p in e['loc'])}: {e['msg']}" for e in exc.errors()
                 )
                 result.errors.append(ItemError(index=index, error=reason, raw=raw))
-                log.warning("extract.invalid", index=index, reason=reason, model=self._model.__name__)
+                log.warning(
+                    "extract.invalid", index=index, reason=reason, model=self._model.__name__
+                )
             except Exception as exc:  # noqa: BLE001 — a missing/renamed node must not abort the crawl
                 result.errors.append(ItemError(index=index, error=repr(exc), raw=raw))
                 log.warning("extract.parse_error", index=index, error=repr(exc))

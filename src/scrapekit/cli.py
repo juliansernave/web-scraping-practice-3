@@ -60,9 +60,7 @@ def run(
     registry = _load_registry()
     tgt = registry.get(target)
     if tgt is None:
-        typer.echo(
-            f"Unknown target {target!r}. Available: {', '.join(sorted(registry))}", err=True
-        )
+        typer.echo(f"Unknown target {target!r}. Available: {', '.join(sorted(registry))}", err=True)
         raise typer.Exit(code=2)
 
     # These strategies land later in the plan; fail clearly rather than run silently wrong.
