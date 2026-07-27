@@ -23,6 +23,14 @@ class Target:
 
     ``dedup_fields`` names the identity subset for storage dedup (e.g. ``("url",)`` for
     books); ``None`` dedupes on the whole record.
+
+    ``page_urls`` is the full set of pages to crawl. It's an explicit list (not "follow the
+    next link") on purpose: knowing every URL up front is what lets the pipeline fan them out
+    concurrently — you can't parallelize a chain you have to walk one link at a time. ``None``
+    means a single page (``url``).
+
+    ``requests_per_second`` is this site's own politeness policy, overriding the global
+    default — a per-host rate lives with the target, not in one global knob.
     """
 
     name: str
@@ -31,3 +39,5 @@ class Target:
     item_selector: str
     parse_item: ParseItem
     dedup_fields: tuple[str, ...] | None = None
+    page_urls: tuple[str, ...] | None = None
+    requests_per_second: float | None = None

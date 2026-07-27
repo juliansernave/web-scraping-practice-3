@@ -41,3 +41,16 @@ QUOTES = Target(
     parse_item=parse_quote,
     dedup_fields=("text",),  # a quote is identified by its text, regardless of tag ordering
 )
+
+# The JS-rendered twin: identical data, model, selectors, and parser — the quotes are just
+# built by JavaScript. Feeding this target through the httpx fetcher yields 0 records; through
+# the Playwright fetcher it yields the same 10 as QUOTES. That contrast is the Day-4 A/B, and
+# the only thing that changes between the two runs is the fetcher.
+QUOTES_JS = Target(
+    name="quotes-js",
+    url="https://quotes.toscrape.com/js/",
+    model=Quote,
+    item_selector="div.quote",
+    parse_item=parse_quote,
+    dedup_fields=("text",),
+)

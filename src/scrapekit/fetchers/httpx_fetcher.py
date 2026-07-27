@@ -28,6 +28,11 @@ class HttpxFetcher:
         self._client = client or ResilientClient(**client_kwargs)  # type: ignore[arg-type]
         self._owns_client = client is None
 
+    @property
+    def retries(self) -> int:
+        """Cumulative transient-failure retries the underlying client has performed."""
+        return self._client.retries
+
     async def fetch(self, url: str) -> FetchResult:
         resp = await self._client.fetch(url)
         return FetchResult(

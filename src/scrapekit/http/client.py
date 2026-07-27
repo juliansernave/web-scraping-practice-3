@@ -116,6 +116,9 @@ class ResilientClient:
             transport=transport,
         )
         self._limiters: dict[str, AsyncLimiter] = {}
+        # Cumulative retries across this client's lifetime — surfaced in the RunReport so a
+        # crawl can report how much transient failure it absorbed (Day 4 monitoring).
+        self.retries = 0
 
     # --- lifecycle -------------------------------------------------------------------------
     async def __aenter__(self) -> ResilientClient:
@@ -173,6 +176,7 @@ class ResilientClient:
         return jittered(retry_state)
 
     def _log_retry(self, retry_state: RetryCallState) -> None:
+        self.retries += 1  # before_sleep fires once per retry — count them for the report
         exc = retry_state.outcome.exception() if retry_state.outcome else None
         log.warning(
             "http.retry",

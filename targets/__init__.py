@@ -8,9 +8,7 @@ from __future__ import annotations
 
 from scrapekit.target import Target
 
-from targets.quotes import QUOTES
+from targets.books import BOOKS
+from targets.quotes import QUOTES, QUOTES_JS
 
-REGISTRY: dict[str, Target] = {
-    QUOTES.name: QUOTES,
-    # books (Day 4), hn (Day 6) register here as they come online.
-}
+REGISTRY: dict[str, Target] = {t.name: t for t in (QUOTES, QUOTES_JS, BOOKS)}
