@@ -27,7 +27,10 @@ USER_AGENTS: tuple[str, ...] = (
 BASE_HEADERS: dict[str, str] = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br",
+    # Deliberately NO Accept-Encoding: httpx sets it from the decoders it actually has
+    # (gzip/deflate always; br/zstd only if brotli/zstandard are installed). Hardcoding
+    # "br" here made us advertise an encoding we couldn't decode — the server sent brotli
+    # and .text came back as garbage. Advertise only what you can decode. Honest by omission.
     "Connection": "keep-alive",
     "Upgrade-Insecure-Requests": "1",
 }
