@@ -12,7 +12,7 @@ from dataclasses import replace
 
 import pytest
 
-from scrapekit.config import Settings
+from scrapekit.config import Settings, get_settings
 from scrapekit.extractors.css import CssExtractor
 from scrapekit.extractors.llm import BudgetExceededError, LlmExtractor
 from scrapekit.fetchers.base import FetchResult
@@ -187,6 +187,10 @@ async def test_no_healing_when_css_is_healthy(load_html, tmp_path):
 
 
 @pytest.mark.live
+@pytest.mark.skipif(
+    not get_settings().anthropic_api_key,
+    reason="ANTHROPIC_API_KEY not set — skip rather than fail a fresh clone with no .env",
+)
 def test_llm_extractor_live_quotes(load_html):
     """Hits the real Anthropic API. Run with `uv run pytest -m live` and a key in .env."""
     ext = LlmExtractor(Quote)  # real client, key from .env
