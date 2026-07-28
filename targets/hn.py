@@ -25,7 +25,7 @@ FRONT_PAGE = "https://news.ycombinator.com/"
 
 
 def _count(text: str) -> int:
-    """"140 comments" / "140\xa0comments" / "discuss" -> 140 / 140 / 0 (no digits yet)."""
+    """ "140 comments" / "140\xa0comments" / "discuss" -> 140 / 140 / 0 (no digits yet)."""
     digits = re.sub(r"\D", "", text)
     return int(digits) if digits else 0
 
