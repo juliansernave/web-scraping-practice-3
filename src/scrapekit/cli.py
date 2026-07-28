@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import typer
@@ -120,6 +121,12 @@ def run(
     heal: bool = typer.Option(
         False, "--heal", help="Self-heal drifted pages via the LLM extractor."
     ),
+    drift_demo: bool = typer.Option(
+        False,
+        "--drift-demo",
+        help="Demo aid: mutate the item selector in-memory to simulate selector drift "
+        "(no files touched). Pair with --heal to show the self-healing recovery live.",
+    ),
     report: bool = typer.Option(False, "--report", help="Write the RunReport JSON to reports/."),
     json_logs: bool = typer.Option(False, "--json-logs", help="Emit JSON logs (prod) vs console."),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="DEBUG-level logging."),
@@ -138,6 +145,12 @@ def run(
     if fetcher not in ("httpx", "playwright"):
         typer.echo(f"Unknown fetcher {fetcher!r} (choose httpx or playwright).", err=True)
         raise typer.Exit(code=2)
+    if drift_demo:
+        # In-memory only — the real targets/*.py file is never touched, so there's nothing to
+        # revert after the demo and no risk of accidentally committing a broken selector.
+        broken_selector = f"{tgt.item_selector}__DEMO_BROKEN"
+        typer.echo(f"--drift-demo: item_selector {tgt.item_selector!r} -> {broken_selector!r}")
+        tgt = replace(tgt, item_selector=broken_selector)
 
     out_path = Path(out) if out else Path("data") / f"{target}.jsonl"
     rep = asyncio.run(

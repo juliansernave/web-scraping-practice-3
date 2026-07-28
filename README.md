@@ -24,11 +24,28 @@ Copy `.env.example` to `.env` and add your `ANTHROPIC_API_KEY` for LLM extractio
 ## Architecture
 
 ```
-fetch (httpx | playwright) → extract (css | llm) → validate (pydantic)
-     → dedupe (sha-256) → store (jsonl/csv) → RunReport (drift alerts, costs)
+targets/*.py                  the only per-site code: url + pydantic model + item_selector
+     |                        + parse_item + dedup_fields (+ page_urls, requests_per_second)
+     v
+cli.py                        scrapekit run <target> [--fetcher] [--extractor] [--heal]
+     v
+Fetcher (protocol)            httpx_fetcher.py: tenacity retry+backoff, per-host aiolimiter
+ httpx | playwright                widened by robots.txt Crawl-delay, protego enforcement
+     |                        playwright_fetcher.py: same protocol, JS-rendered pages
+     v
+Extractor (protocol)          css.py: BeautifulSoup selectors -> raw dict
+ css | llm                    llm.py: text -> Claude, schema-guided parse, token pre-count,
+     |                              USD budget cap, content-hash cache (never pay twice)
+     v
+pydantic model (models/*.py)  the contract: bad records collected as ItemError, not raised
+     |
+     +-- yield below drift threshold? --> llm_fallback re-extracts the page (self-heal)
+     v
+storage.py                    sha-256 content-hash dedupe -> JSONL (+ CSV export)
+     v
+monitoring.py: RunReport      pages fetched/failed, valid/invalid/duped, retries, duration,
+                               extraction_rate, drift_alert, healed_pages, llm_cost_usd
 ```
-
-<!-- TODO Day 7: replace with the full ASCII architecture diagram -->
 
 ## Decision framework: which tool for which job
 
