@@ -34,6 +34,7 @@ class PageStat:
     matched: int  # items the item-selector matched on this page
     valid: int
     invalid: int
+    healed: bool = False  # CSS yield was low, so the LLM fallback re-extracted this page
 
     @property
     def yield_rate(self) -> float:
@@ -59,6 +60,8 @@ class RunReport:
     retries: int  # transient-failure retries the fetcher performed during this run
     duration_seconds: float
     drift_threshold: float
+    healed_pages: int = 0  # pages the LLM fallback recovered after CSS drift
+    llm_cost_usd: float = 0.0  # what the self-healing (or LLM extractor) spent this run
     pages: list[PageStat] = field(default_factory=list)
 
     @property
