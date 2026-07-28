@@ -9,6 +9,7 @@ from __future__ import annotations
 from scrapekit.target import Target
 
 from targets.books import BOOKS
+from targets.hn import HN
 from targets.quotes import QUOTES, QUOTES_JS
 
-REGISTRY: dict[str, Target] = {t.name: t for t in (QUOTES, QUOTES_JS, BOOKS)}
+REGISTRY: dict[str, Target] = {t.name: t for t in (QUOTES, QUOTES_JS, BOOKS, HN)}

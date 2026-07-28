@@ -32,17 +32,18 @@ fetch (httpx | playwright) → extract (css | llm) → validate (pydantic)
 
 ## Decision framework: which tool for which job
 
-<!-- Fill the cost column with real numbers from reports/ during the week -->
+Climb from the cheapest reliable rung. "Measured" rows are real numbers from `reports/`
+(this repo's own runs); the rest is awareness from prior projects, not yet built here.
 
-| Rung | When | Cost/1k pages |
-|---|---|---|
-| Official API | Exists and covers the data | ~free |
-| httpx + CSS | Static HTML, stable structure | TBD |
-| Playwright + CSS | JS rendering, infinite scroll | TBD |
-| LLM extraction | Messy / inconsistent / changing markup | TBD (Day 5) |
-| crawl4ai / Firecrawl | Many unknown sites → LLM-ready content fast | TBD (Day 6) |
-| Apify managed actors | Serious anti-bot targets | per-result pricing |
-| Agentic scraping | Navigation itself needs judgment | highest |
+| Rung | When | Cost/1k pages | Measured |
+|---|---|---|---|
+| Official API | Exists and covers the data | ~free | — |
+| httpx + CSS | Static HTML, stable structure | $0 | ✅ 1000 books in 6.9s (`scrapekit run books`) |
+| Playwright + CSS | JS rendering, infinite scroll | $0 + compute | ✅ 10 quotes/js in 2.3s incl. ~2s browser launch |
+| LLM extraction | Messy / inconsistent / changing markup | ~$49–110 (`claude-opus-4-8`) | ✅ books: $0.049/pg; HN: $0.11/pg — a cheaper model would cut this proportionally |
+| crawl4ai / Firecrawl | Many unknown sites → LLM-ready content fast | $0 local fetch + whatever extractor you pair it with | ✅ HN fetch: 1.5s, $0 (extraction cost = the LLM row above) |
+| Apify managed actors | Serious anti-bot targets (e.g. openlibrary's bot wall, hit during the Day-6 spike) | per-result pricing | — |
+| Agentic scraping | Navigation itself needs judgment, not just extraction | highest, variable | — |
 
 ## Ethics
 
