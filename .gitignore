@@ -10,3 +10,5 @@ reports/*.json
 !reports/sample_report.json
 notes/*.html
 .DS_Store
+.claude/settings.local.json
+.claude/**/*-workspace/

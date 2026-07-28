@@ -1,0 +1,26 @@
+{
+  "skill_name": "resilient-web-scraping",
+  "evals": [
+    {
+      "id": 1,
+      "name": "decision-ladder",
+      "prompt": "I need to build a scraper in Python that pulls product listings (name, price, rating) from an e-commerce category page. It's server-rendered HTML, no JS needed to see the data. This needs to run nightly for months without me babysitting it. How should I structure this and what should I watch out for?",
+      "expected_output": "Should reach for the decision ladder (recommend HTTP+CSS over headless browser or LLM since content is static), propose a fetch->extract->validate->dedupe->store pipeline with swappable seams, mention retry/backoff for transient failures only, per-host rate limiting, robots.txt, and extraction-rate monitoring as the way to catch silent breakage over months of unattended runs.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "silent-drift",
+      "prompt": "My scraper for a news site's article listing broke last week - it kept running fine every night and returned 0 new articles, but nobody noticed until someone asked why the internal dashboard looked empty for 4 days. It's a Node/Puppeteer scraper. How do I stop this from happening again?",
+      "expected_output": "Should identify this as classic selector-drift silent failure, recommend tracking extraction rate (valid/matched ratio) as a production assertion with alerting below a threshold, distinguish between item-selector breaking (zero matches) vs field-selector breaking (matches but fails to parse), and suggest frozen-fixture drift tests to catch this in CI before it hits production.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "add-tests",
+      "prompt": "I have a working scraper script (single file, requests + BeautifulSoup, no tests) that hits a job listings site every hour via cron. I want to add a proper test suite before I trust it more, but I don't want to hit the real site every time tests run.",
+      "expected_output": "Should recommend the network-free testing pyramid: frozen HTML fixtures for parser regression tests, mocking the HTTP transport layer (not just the whole client) to fault-inject retry/rate-limit scenarios, schema/contract tests for known-bad payloads, drift tests via fixture mutation, and a fake-fetcher end-to-end pipeline test - explicitly avoiding hitting the real network in the default test run.",
+      "files": []
+    }
+  ]
+}
